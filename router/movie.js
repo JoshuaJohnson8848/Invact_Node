@@ -1,7 +1,11 @@
 import { Router } from 'express';
-import { createMovie } from '../controller/movie.js';
+import { createMovie, getMovies, getOneMovie } from '../controller/movie.js';
 
 const router = Router();
+
+router.get('', getMovies);
+
+router.get('/:id', getOneMovie);
 
 router.post('', createMovie);
 

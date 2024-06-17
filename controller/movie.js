@@ -56,42 +56,23 @@ export const createMovie = async(req ,res, next) => {
 
 export const getMovies = async(req ,res, next) => {
     try {
-        const { id } = req.params;
-        const existMovies = await User.aggregate([
-        [
-            {
-                $match: {
-                    _id: Types.ObjectId.createFromHexString(id),
-                },
-            },
-            {
-                $project: {
-                    _id: 1,
-                    title: 1,
-                    genre: 1,
-                    year: 1,
-                    desc: 1,
-                    rating: 1,
-                    review: 1,
-                    photo: 1,
-                    watched: 1,
-                },
-            },
-        ],
-        ]);
-        if (!existUser.length) {
-        const error = new Error('User not found');
-        error.status = 422;
-        throw error;
+
+        const existMovies = await Movie.find();
+
+        if (!existMovies.length) {
+            const error = new Error('Movies not found');
+            error.status = 422;
+            throw error;
+        }
+        
+        for (const movie of existMovies) {
+            const imageUrl = await generatePresignedUrl(AWS_Bucket_Name, movie.photo, Exp);
+            if (imageUrl) {
+              movie.photo = imageUrl;
+            }
         }
 
-        const imageUrl = await generatePresignedUrl(AWS_Bucket_Name, existUser[0]?.photo, Exp);
-
-        if(imageUrl){
-          existUser[0].photo = imageUrl;
-        }
-
-        res.status(200).json({ message: 'User Fetched', user: existUser[0] });
+        res.status(200).json({ message: 'Movies Fetched', movies: existMovies });
 
     } catch (error) {
         if(!error.status){
@@ -100,3 +81,60 @@ export const getMovies = async(req ,res, next) => {
         next(error);
     }
 }
+
+export const getOneMovie = async(req ,res, next) => {
+    try {
+        const { id } = req.params;
+        const existMovie = await Movie.findById(id);
+
+        if (!existMovie) {
+        const error = new Error('Movies not found');
+        error.status = 422;
+        throw error;
+        }
+        
+        const imageUrl = await generatePresignedUrl(AWS_Bucket_Name, existMovie.photo, Exp);
+        if (imageUrl) {
+            existMovie.photo = imageUrl;
+        }
+
+        res.status(200).json({ message: 'Movies Fetched', movies: existMovie });
+
+    } catch (error) {
+        if(!error.status){
+            error.status = 500;
+        }
+        next(error);
+    }
+}
+
+// exports.deleteImg = async(req, res,next)=>{
+//     try{
+//       const { userId } = req;
+//       const user = await User.findById(userId);
+      
+//       if(!user){
+//         const error = new Error('Image Delete Failed');
+//         error.status = 422;
+//         throw error;
+//       }
+  
+//       const deleted = await deleteImage(AWS_Bucket_Name, user.photo);
+//       if(!deleted){
+//         const error = new Error('Image Delete Failed');
+//         error.status = 422;
+//         throw error;
+//       }
+  
+//       user.photo = '';
+//       await user.save();
+  
+//       res.status(200).json({message: "Image Deleted"})
+  
+//     }catch(err){
+//       if (!err.status) {
+//         err.status = 500;
+//       }
+//       next(err);
+//     }
+//   }
