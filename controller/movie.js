@@ -108,33 +108,39 @@ export const getOneMovie = async(req ,res, next) => {
     }
 }
 
-// exports.deleteImg = async(req, res,next)=>{
-//     try{
-//       const { userId } = req;
-//       const user = await User.findById(userId);
+export const deleteMovie= async(req, res,next)=>{
+    try{
+      const { movieId } = req.params;
+      const movie = await Movie.findById(movieId);
       
-//       if(!user){
-//         const error = new Error('Image Delete Failed');
-//         error.status = 422;
-//         throw error;
-//       }
+      if(!movie){
+          const error = new Error('Movie Not Found');
+          error.status = 404;
+          throw error;
+        }
+
+      const deleted = await deleteImage(AWS_Bucket_Name, movie.photo);
   
-//       const deleted = await deleteImage(AWS_Bucket_Name, user.photo);
-//       if(!deleted){
-//         const error = new Error('Image Delete Failed');
-//         error.status = 422;
-//         throw error;
-//       }
+      if(!deleted){
+        const error = new Error('Movie Image Delete Failed');
+        error.status = 422;
+        throw error;
+      }
+
+      const deleteMovie = await Movie.findByIdAndDelete(movieId)
+
+      if(!deleteMovie){
+        const error = new Error('Movie Delete Failed');
+        error.status = 422;
+        throw error;
+      }
   
-//       user.photo = '';
-//       await user.save();
+      res.status(200).json({message: "Movie Deleted", deleted: true})
   
-//       res.status(200).json({message: "Image Deleted"})
-  
-//     }catch(err){
-//       if (!err.status) {
-//         err.status = 500;
-//       }
-//       next(err);
-//     }
-//   }
+    }catch(err){
+      if (!err.status) {
+        err.status = 500;
+      }
+      next(err);
+    }
+  }
