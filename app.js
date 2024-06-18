@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import multer from 'multer';
 import bodyParser from 'body-parser';
 
-const app = express();
+export const app = express();
 
 import movieRouter  from './router/movie.js';
 

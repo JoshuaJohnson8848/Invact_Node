@@ -14,7 +14,7 @@ export const createMovie = async(req ,res, next) => {
             year: year,
             genre: genre,
             desc: desc,
-            rating: rating,
+            rating: rating ? rating : null,
             review: review,
             watched: false
         })
@@ -28,7 +28,7 @@ export const createMovie = async(req ,res, next) => {
             };
           
             const uKey = await s3.upload(params).promise();
-    
+
             if(!uKey){
                 const error = new Error('Image upload Failed');
                 error.status = 422;
@@ -40,11 +40,13 @@ export const createMovie = async(req ,res, next) => {
 
 
         const created = await newData.save();
-        if(!created){
-            throw new Error("Movie not created");
+        if (!created) {
+            const error = new Error('Movies not created');
+            error.status = 422;
+            throw error;
         }
 
-        res.status(200).json({ message: "Movie Added", movie: created })
+        res.status(200).json({ message: "Movie Added", isCreated: true })
     } catch (error) {
         if(!error.status){
             error.status = 500;
@@ -97,7 +99,7 @@ export const getOneMovie = async(req ,res, next) => {
             existMovie.photo = imageUrl;
         }
 
-        res.status(200).json({ message: 'Movies Fetched', movies: existMovie });
+        res.status(200).json({ message: 'Movies Fetched', movie: existMovie });
 
     } catch (error) {
         if(!error.status){
