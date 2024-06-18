@@ -58,7 +58,27 @@ export const createMovie = async(req ,res, next) => {
 export const getMovies = async(req ,res, next) => {
     try {
 
-        const existMovies = await Movie.find();
+        const { status } = req.query;
+
+        let existMovies;
+
+        if(status == 'watched'){
+            existMovies = await Movie.aggregate([
+                {
+                    $match: { watched: true }
+                }
+            ]);
+
+        } else if(status == 'unwatched'){
+            existMovies = await Movie.aggregate([
+                {
+                    $match: { watched: false }
+                }
+            ]);
+        } else {
+            existMovies = await Movie.find();
+        }
+
 
         if (!existMovies.length) {
             const error = new Error('Movies not found');
