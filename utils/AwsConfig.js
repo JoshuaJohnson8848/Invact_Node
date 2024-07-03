@@ -1,5 +1,5 @@
 import AWS from 'aws-sdk';
-import { AWS_Access_Key, AWS_Secret_Key, Region } from '../config/AwsCred.js';
+// import { AWS_Access_Key, AWS_Secret_Key, Region } from '../config/AwsCred.js';
 
 AWS.config.update({
     accessKeyId: process.env.AWS_Access_Key,

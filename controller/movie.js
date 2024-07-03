@@ -2,7 +2,7 @@ import Movie from "../models/movie.js";
 import s3 from '../utils/AwsConfig.js';
 import { generatePresignedUrl, deleteImage } from '../utils/AwsFunctions.js';
 import { v4 as uuidv4 } from 'uuid';
-import { Exp, AWS_Bucket_Name } from '../config/AwsCred.js';
+// import { Exp, AWS_Bucket_Name } from '../config/AwsCred.js';
 
 export const createMovie = async(req ,res, next) => {
     try {
