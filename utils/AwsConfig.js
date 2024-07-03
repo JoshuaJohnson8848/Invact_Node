@@ -2,9 +2,9 @@ import AWS from 'aws-sdk';
 import { AWS_Access_Key, AWS_Secret_Key, Region } from '../config/AwsCred.js';
 
 AWS.config.update({
-    accessKeyId: AWS_Access_Key,
-    secretAccessKey: AWS_Secret_Key,
-    region: Region
+    accessKeyId: process.env.AWS_Access_Key,
+    secretAccessKey: process.env.AWS_Secret_Key,
+    region: process.env.Region
 });
 
 const s3 = new AWS.S3();

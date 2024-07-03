@@ -21,7 +21,7 @@ export const createMovie = async(req ,res, next) => {
 
         if(image){
             const params = {
-                Bucket: AWS_Bucket_Name,
+                Bucket: process.env.AWS_Bucket_Name,
                 Key: `images/invact/${title}-${year}-${uuidv4()}-${image.originalname}`,
                 Body: image.buffer,
                 ContentType: image.mimetype
@@ -87,7 +87,7 @@ export const getMovies = async(req ,res, next) => {
         }
         
         for (const movie of existMovies) {
-            const imageUrl = await generatePresignedUrl(AWS_Bucket_Name, movie.photo, Exp);
+            const imageUrl = await generatePresignedUrl(process.env.AWS_Bucket_Name, movie.photo, process.env.Exp);
             if (imageUrl) {
               movie.photo = imageUrl;
             }
@@ -114,7 +114,7 @@ export const getOneMovie = async(req ,res, next) => {
         throw error;
         }
         
-        const imageUrl = await generatePresignedUrl(AWS_Bucket_Name, existMovie.photo, Exp);
+        const imageUrl = await generatePresignedUrl(process.env.AWS_Bucket_Name, existMovie.photo, process.env.Exp);
         if (imageUrl) {
             existMovie.photo = imageUrl;
         }
@@ -140,7 +140,7 @@ export const deleteMovie = async(req, res,next)=>{
           throw error;
         }
 
-      const deleted = await deleteImage(AWS_Bucket_Name, movie.photo);
+      const deleted = await deleteImage(process.env.AWS_Bucket_Name, movie.photo);
   
       if(!deleted){
         const error = new Error('Movie Image Delete Failed');
@@ -189,7 +189,7 @@ export const updateMovie = async(req, res, next)=>{
 
 
         if(image){
-            const deleted = await deleteImage(AWS_Bucket_Name, movie.photo);
+            const deleted = await deleteImage(process.env.AWS_Bucket_Name, movie.photo);
 
             if(!deleted){
                 const error = new Error('Movie Image Delete Failed');
@@ -198,7 +198,7 @@ export const updateMovie = async(req, res, next)=>{
             }
 
             const params = {
-                Bucket: AWS_Bucket_Name,
+                Bucket: process.env.AWS_Bucket_Name,
                 Key: `images/invact/${title}-${year}-${uuidv4()}-${image.originalname}`,
                 Body: image.buffer,
                 ContentType: image.mimetype
