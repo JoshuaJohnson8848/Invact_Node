@@ -1,4 +1,5 @@
-import s3 from '../utils/AwsConfig.js';
+// import s3 from '../utils/AwsConfig.js';
+import { s3 } from '../app.js';
 
 export const generatePresignedUrl = async (bucketName, key, expiration) => {
     const params = {

@@ -1,5 +1,6 @@
 import Movie from "../models/movie.js";
-import s3 from '../utils/AwsConfig.js';
+// import s3 from '../utils/AwsConfig.js';
+import { s3 } from '../app.js';
 import { generatePresignedUrl, deleteImage } from '../utils/AwsFunctions.js';
 import { v4 as uuidv4 } from 'uuid';
 // import { Exp, AWS_Bucket_Name } from '../config/AwsCred.js';
@@ -87,7 +88,7 @@ export const getMovies = async(req ,res, next) => {
         }
         
         for (const movie of existMovies) {
-            const imageUrl = await generatePresignedUrl(process.env.AWS_Bucket_Name, movie.photo, process.env.Exp);
+            const imageUrl = await generatePresignedUrl(process.env.AWS_Bucket_Name, movie.photo, Number(process.env.Exp));
             if (imageUrl) {
               movie.photo = imageUrl;
             }

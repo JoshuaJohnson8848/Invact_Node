@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import multer from 'multer';
 import bodyParser from 'body-parser';
+import AWS from 'aws-sdk';
 
 export const app = express();
 
@@ -34,6 +35,14 @@ app.use((error, req, res, next) => {
   res.status(status).json({ message: message, data: data });
   next();
 });
+
+AWS.config.update({
+    accessKeyId: process.env.AWS_Access_Key,
+    secretAccessKey: process.env.AWS_Secret_Key,
+    region: process.env.Region
+});
+
+export const s3 = new AWS.S3();
 
 mongoose
   .connect(process.env.MONGO_URI)
